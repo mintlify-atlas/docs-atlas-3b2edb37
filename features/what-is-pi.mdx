@@ -1,0 +1,62 @@
+---
+title: "What is Pi? Interactive circle visualizer"
+description: "Explore the mathematical constant π through a live circle visualizer that updates diameter and circumference in real time as you drag a slider."
+---
+
+The **What is Pi?** section of the app gives you an interactive way to experience the fundamental relationship between a circle's circumference and its diameter. Rather than just stating that π ≈ 3.14159, the visualizer lets you drag a slider to resize a circle and watch the circumference recompute instantly — demonstrating that no matter the size, dividing circumference by diameter always yields the same irrational number.
+
+## Interactive slider
+
+The visualizer renders an animated circle alongside a range input. Dragging the slider changes the radius from a minimum of **10** to a maximum of **100** units. As you move it, two values update live in the readout above the slider:
+
+- **Radius** — the current value you have selected
+- **Diameter** — always `radius × 2`
+
+The circle itself scales smoothly using a Framer Motion spring animation, so you can see the geometry grow and shrink in real time.
+
+## Circumference formula
+
+Below the slider, a display panel shows the computed circumference and the ratio that proves π:
+
+```
+Circumference = 2 × π × radius
+```
+
+For example, with a radius of 50 the panel reads:
+
+```
+Circumference = 314.16
+314.16 / 100 = 3.14159...
+```
+
+The ratio `circumference / diameter` is always shown to five decimal places. Regardless of where you drag the slider, the result converges to π, making the constant's universality tangible rather than abstract.
+
+<Note>
+  The circumference is computed in JavaScript as `(2 * Math.PI * radius).toFixed(2)`, so you are seeing the browser's 64-bit floating-point approximation of π — already accurate to at least 15 significant digits.
+</Note>
+
+## Pi property cards
+
+To the right of the visualizer, three cards explain what makes π special as a number. Each card contains an icon, a title, and a description pulled directly from the source:
+
+<CardGroup cols={1}>
+  <Card title="Irrational (Es Irracional)" icon="infinity">
+    Pi cannot be expressed as an exact fraction (such as a/b). Its decimal digits continue forever without repeating in any pattern.
+  </Card>
+  <Card title="Transcendental (Es Trascendente)" icon="sparkles">
+    Pi is not the root of any algebraic equation with rational coefficients. This means it is impossible to "square the circle" using only a straightedge and compass.
+  </Card>
+  <Card title="Universal (Es Universal)" icon="globe">
+    Pi appears in formulas from quantum physics, electromagnetism, cosmology, and even in the probability that a needle crosses a line — the Buffon's needle problem.
+  </Card>
+</CardGroup>
+
+Each card lifts and slides slightly to the right when you hover over it, giving the page a responsive, tactile feel.
+
+## Why the ratio is always π
+
+The core insight the section conveys is this: no matter how large or small the circle is, the ratio of its circumference to its diameter is always π. The slider makes this experiential — you can set the radius to 10, note the ratio, set it to 100, and see the same value appear. This constancy is precisely what makes π a mathematical constant rather than a measurement.
+
+<Info>
+  The value 355/113 — introduced later in the History timeline — is so close to π (accurate to six decimal places) that it was the best known approximation for 800 years. Yet even that fraction is only an approximation; π's irrationality guarantees no fraction can be exact.
+</Info>

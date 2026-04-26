@@ -1,0 +1,42 @@
+---
+title: "The 3.14159 easter egg"
+description: "Type 3.14159 anywhere on the Pi Day page to trigger a hidden confetti burst and alert — no text field required, just your keyboard."
+---
+
+The Pi Day app hides a secret easter egg that you can trigger from anywhere on the page. There's no button to click and no menu to find — it's activated entirely through your keyboard.
+
+## How to trigger it
+
+Type `3.14159` using your keyboard while on any part of the page. You don't need to focus a text field; the app listens to all keydown events globally. As long as the last seven characters you type match the target string, the easter egg fires.
+
+<Tip>
+  Try it now — just press `3`, `.`, `1`, `4`, `1`, `5`, `9` in sequence anywhere on the page and watch what happens.
+</Tip>
+
+## What happens
+
+When the sequence is detected, three things occur simultaneously:
+
+<Steps>
+  <Step title="Confetti burst">
+    A continuous stream of confetti erupts from both sides of the screen for three seconds. Particles shoot inward from the left edge at a 60° angle and from the right edge at a 120° angle, filling the viewport.
+  </Step>
+  <Step title="Success sound">
+    A short success sound plays immediately when the easter egg triggers.
+  </Step>
+  <Step title="Alert message">
+    A browser alert pops up with the message: *¡Encontraste el Pi Moment! — Has tecleado 3.14159 y desbloqueado este secreto.*
+  </Step>
+</Steps>
+
+## Implementation details
+
+The `EasterEgg` component is invisible — it renders `null` to the DOM and works purely through a side effect. It attaches a `keydown` listener to the `window` object and tracks only numeric and dot characters. On every valid keystroke it appends the character to a running buffer and trims the buffer to the last seven characters. If the buffer equals the target string, `triggerCelebration` is called.
+
+```typescript
+const TARGET = "3.14159";
+
+const colors = ['#00D4FF', '#B026FF', '#ffffff'];
+```
+
+The confetti burst uses `canvas-confetti` with those three colors — neon cyan, neon purple, and white — fired in a dual-cannon loop from `origin: { x: 0 }` and `origin: { x: 1 }` until three seconds have elapsed.

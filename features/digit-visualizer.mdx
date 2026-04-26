@@ -1,0 +1,43 @@
+---
+title: "Digit visualizer: 1,000 Pi digits in color"
+description: "Explore the first 1,000 digits of Pi as a color-coded matrix grid or a glowing circular arrangement, with a legend for every digit."
+---
+
+The digit visualizer renders the first 1,000 digits of Pi as an interactive color display. You can switch between two views — a responsive grid (Matrix) and a circular arrangement (Circle) — to explore the distribution of digits at a glance. Each digit 0–9 is assigned a distinct neon color so patterns and frequencies become immediately visible.
+
+## Views
+
+### Matrix view
+
+Matrix view places all 1,000 digits into a responsive grid. Each cell is a small colored square whose background color corresponds to the digit it represents. The grid adapts its column count to your screen width, from 20 columns on small screens up to 50 columns on large screens.
+
+<Tip>
+  Hover over any cell in Matrix view to see a tooltip showing its position in the sequence and the digit value — for example, `#1: 3`.
+</Tip>
+
+### Circle view
+
+Circle view arranges all 1,000 dots in a full 360° ring. Each dot is placed at an even angular interval (`360° / 1000` per step) and pushed outward from the center at a fixed radius. The dots glow with the same neon colors as the matrix, and a faint π symbol sits at the center of the ring. The circle animates in with a rotation when you switch to this view.
+
+## Digit color mapping
+
+Every digit is assigned a unique neon hex color. The mapping used throughout the visualizer is:
+
+```typescript
+export const DIGIT_COLORS = {
+  '0': '#FF3366', // Hot Pink
+  '1': '#FF6633', // Orange-Pink
+  '2': '#FFCC00', // Yellow
+  '3': '#33FF66', // Lime Green
+  '4': '#00FFFF', // Cyan
+  '5': '#0099FF', // Bright Blue
+  '6': '#6633FF', // Purple
+  '7': '#CC33FF', // Violet
+  '8': '#FFFFFF', // White glow
+  '9': '#99FF33', // Neon Green
+};
+```
+
+## Color legend
+
+Below the visualizer panel, a color legend lists all ten digits alongside their corresponding colored swatches. Each swatch glows with the same neon shadow as the cells above, making it easy to cross-reference what you see in the grid or circle with its digit value.

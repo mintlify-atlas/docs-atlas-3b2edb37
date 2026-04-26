@@ -1,0 +1,203 @@
+---
+title: "Styling: Tailwind v4, CSS variables, and glassmorphism"
+description: "How the Pi Day app uses Tailwind CSS v4, HSL custom properties, custom utility classes, and keyframe animations to build its dark sci-fi theme."
+---
+
+The Pi Day app uses Tailwind CSS v4 with a custom dark-only sci-fi theme. All design tokens are defined as CSS custom properties in `src/index.css` and consumed by both Tailwind utility classes and raw CSS rules. There is no light mode — the `:root` block defines a single futuristic palette centered on electric neon blue, neon purple, and hot pink against a deep space background.
+
+## Color palette
+
+The following HSL custom properties form the full color system. Tailwind v4 maps each to a `--color-*` counterpart via the `@theme inline` block, making them available as utility classes such as `bg-primary`, `text-secondary`, and `border-accent`.
+
+```css
+:root {
+  --background:  240 33%  4%;   /* Deep dark space blue-black */
+  --foreground:  210 40% 98%;
+
+  --card:        240 25%  8%;   /* Slightly lighter than background for depth */
+  --card-foreground: 210 40% 98%;
+
+  --primary:     195 100% 50%; /* Electric Neon Blue */
+  --primary-foreground: 240 33% 4%;
+
+  --secondary:   280 100% 65%; /* Neon Purple */
+  --secondary-foreground: 210 40% 98%;
+
+  --muted:       240 20% 15%;
+  --muted-foreground: 240 10% 65%;
+
+  --accent:      320 100% 60%; /* Hot Pink */
+  --accent-foreground: 210 40% 98%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border:      240 30% 15%;
+  --input:       240 30% 15%;
+  --ring:        195 100% 50%;
+
+  --radius: 1rem;
+}
+```
+
+<Note>
+  All colors use HSL triplets without the `hsl()` wrapper so they can be composed inside `hsl(var(--primary) / 0.5)` alpha expressions at the call site.
+</Note>
+
+## Typography
+
+Three Google Fonts families are imported at the top of `index.css` and registered in the `@theme inline` block:
+
+| Token | Family | Use |
+|-------|--------|-----|
+| `font-sans` | Outfit (300–700) | Body text and UI labels |
+| `font-display` | Space Grotesk (400–800) | All headings (`h1`–`h6`) |
+| `font-mono` | JetBrains Mono (400, 700) | Code, digit ribbons, and monospaced data |
+
+Headings automatically receive `font-display` and `tracking-tight` via the base layer rule:
+
+```css
+h1, h2, h3, h4, h5, h6 {
+  @apply font-display tracking-tight;
+}
+```
+
+## Utility classes
+
+Three hand-written utility classes are defined in `index.css` outside of any Tailwind layer:
+
+### `.glass-panel`
+
+Creates a frosted-glass card effect used by the mobile nav drawer, the PiBot chat window, and section cards:
+
+```css
+.glass-panel {
+  @apply bg-card/60 backdrop-blur-md border border-white/10 shadow-xl shadow-black/50;
+}
+```
+
+### `.glow-text`
+
+Applies a two-layer neon text shadow using the primary color. Used on the `π` logo mark in `Navbar` and the hero subtitle:
+
+```css
+.glow-text {
+  text-shadow:
+    0 0 10px hsla(var(--primary) / 0.7),
+    0 0 20px hsla(var(--primary) / 0.5);
+}
+```
+
+### `.glow-text-secondary`
+
+The same two-layer neon shadow but using `--secondary` (Neon Purple):
+
+```css
+.glow-text-secondary {
+  text-shadow:
+    0 0 10px hsla(var(--secondary) / 0.7),
+    0 0 20px hsla(var(--secondary) / 0.5);
+}
+```
+
+## Custom animations
+
+Three named keyframe animations are registered in the `@theme inline` block and exposed as Tailwind `animate-*` utilities:
+
+<AccordionGroup>
+  <Accordion title="animate-pulse-glow">
+    A 3-second infinite cycle that fades the `π` symbol's opacity and scales its `drop-shadow` between a soft glow at rest and a blazing neon burst at the midpoint. Applied to the hero `π` heading.
+
+    ```css
+    @keyframes pulse-glow {
+      0%, 100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 15px hsl(var(--primary) / 0.6));
+      }
+      50% {
+        opacity: 0.7;
+        filter: drop-shadow(0 0 35px hsl(var(--primary) / 0.9));
+      }
+    }
+    /* timing: 3s cubic-bezier(0.4, 0, 0.6, 1) infinite */
+    ```
+  </Accordion>
+
+  <Accordion title="animate-float">
+    A 6-second ease-in-out infinite loop that translates an element up by 20 px and back. Used on decorative π symbols and floating card elements to suggest weightlessness.
+
+    ```css
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-20px); }
+    }
+    /* timing: 6s ease-in-out infinite */
+    ```
+  </Accordion>
+
+  <Accordion title="animate-spin-slow">
+    A standard linear infinite rotation, but stretched to an 8-second period so it reads as a slow, deliberate orbit rather than a loading spinner. Applied to decorative ring elements around section icons.
+
+    ```css
+    /* Uses the built-in Tailwind spin keyframe */
+    /* timing: 8s linear infinite */
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Background ambient lighting
+
+The `body` element carries two fixed radial gradients that create a subtle ambient glow across the entire page:
+
+```css
+body {
+  background-image:
+    radial-gradient(
+      circle at 15% 50%,
+      hsla(var(--primary) / 0.05) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 85% 30%,
+      hsla(var(--secondary) / 0.05) 0%,
+      transparent 50%
+    );
+  background-attachment: fixed;
+}
+```
+
+The left gradient is a faint primary-blue bloom; the right is a faint secondary-purple bloom. Both are set to 5% opacity so they add atmosphere without competing with section content.
+
+## Custom scrollbar
+
+The scrollbar is restyled to match the sci-fi aesthetic using WebKit pseudo-elements:
+
+```css
+::-webkit-scrollbar        { width: 10px; }
+::-webkit-scrollbar-track  { background: hsl(var(--background)); }
+::-webkit-scrollbar-thumb  { background: hsl(var(--muted)); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--primary)); }
+```
+
+The thumb adopts the `--primary` neon blue on hover, giving keyboard and mouse users a tactile neon highlight as they scroll.
+
+## DIGIT_COLORS neon mapping
+
+The `Visualizer` section and other digit-rendering components use a per-digit color map exported from `src/lib/constants.ts`. Each digit 0–9 is assigned a distinct neon hex color:
+
+```typescript
+export const DIGIT_COLORS = {
+  '0': '#FF3366', // Hot Pink
+  '1': '#FF6633', // Orange-Pink
+  '2': '#FFCC00', // Yellow
+  '3': '#33FF66', // Lime Green
+  '4': '#00FFFF', // Cyan
+  '5': '#0099FF', // Bright Blue
+  '6': '#6633FF', // Purple
+  '7': '#CC33FF', // Violet
+  '8': '#FFFFFF', // White glow
+  '9': '#99FF33', // Neon Green
+};
+```
+
+When you render a digit cell, look up its color with `DIGIT_COLORS[digit]` and apply it as an inline `color` or `backgroundColor` style. The palette is designed so no two adjacent digits share a similar hue, making individual digits visually distinct even in dense grids.

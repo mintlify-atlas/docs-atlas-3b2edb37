@@ -1,0 +1,133 @@
+---
+title: "Get started with Pi Day locally"
+description: "Clone the Pi Day repository, install dependencies, and start the Vite dev server to explore the full interactive experience locally in minutes."
+---
+
+This page walks you through everything you need to run Pi Day on your local machine: cloning the repository, installing dependencies, starting the development server, and building for production. No account or API key is required — the app is fully client-side.
+
+## Prerequisites
+
+You need **Node.js 18 or later** and a package manager (npm, yarn, or pnpm) installed. Verify your Node version before continuing:
+
+```bash
+node --version
+```
+
+## Local dev setup
+
+<Steps>
+  <Step title="Clone the repository">
+    Clone the Pi Day source code from GitHub:
+
+    ```bash
+    git clone https://github.com/Fercho12s/pi-day-vercel.git
+    cd pi-day-vercel
+    ```
+  </Step>
+
+  <Step title="Install dependencies">
+    Install all project dependencies using your preferred package manager:
+
+    <CodeGroup>
+
+    ```bash npm
+    npm install
+    ```
+
+    ```bash yarn
+    yarn
+    ```
+
+    ```bash pnpm
+    pnpm install
+    ```
+
+    </CodeGroup>
+
+    The install pulls React 19, Tailwind CSS v4, Framer Motion, all Radix UI primitives, and the rest of the dependency tree declared in `package.json`.
+  </Step>
+
+  <Step title="Start the dev server">
+    Launch the Vite development server:
+
+    <CodeGroup>
+
+    ```bash npm
+    npm run dev
+    ```
+
+    ```bash yarn
+    yarn dev
+    ```
+
+    ```bash pnpm
+    pnpm dev
+    ```
+
+    </CodeGroup>
+
+    Vite compiles the app and starts a local server with hot module replacement (HMR) enabled.
+  </Step>
+
+  <Step title="Open the app in your browser">
+    Navigate to the local address Vite prints in your terminal:
+
+    ```
+    http://localhost:5173
+    ```
+
+    You should see the Pi Day hero section with the animated π symbol. Scroll down to explore the remaining sections, or use the navbar links for smooth-scroll navigation.
+  </Step>
+</Steps>
+
+## Build and preview for production
+
+Use the build script to generate an optimized static bundle in the `dist/` directory:
+
+<CodeGroup>
+
+```bash npm
+npm run build
+```
+
+```bash yarn
+yarn build
+```
+
+```bash pnpm
+pnpm build
+```
+
+</CodeGroup>
+
+Once the build completes, preview it locally with the production server:
+
+<CodeGroup>
+
+```bash npm
+npm run preview
+```
+
+```bash yarn
+yarn preview
+```
+
+```bash pnpm
+pnpm preview
+```
+
+</CodeGroup>
+
+The preview server serves the contents of `dist/` and behaves the same way as the deployed Vercel environment.
+
+## BASE_URL and image paths
+
+Vite exposes a `BASE_URL` environment variable that reflects the `base` option in `vite.config.ts`. The app reads `import.meta.env.BASE_URL` at runtime to configure the wouter router's base path — this ensures image paths and client-side routing work correctly when the app is deployed to a sub-path. The default value is `/`, so no extra configuration is needed for local development.
+
+<Info>
+  If you fork the project and deploy it to a GitHub Pages sub-path (e.g., `/pi-day-vercel/`), set `base` in `vite.config.ts` to match that sub-path so asset URLs resolve correctly.
+</Info>
+
+<Tip>
+  Once the app is running, try typing `3.14159` anywhere on the page. The app listens for that exact sequence globally and triggers a hidden easter egg.
+</Tip>

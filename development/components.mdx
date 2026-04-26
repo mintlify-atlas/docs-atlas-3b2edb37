@@ -1,0 +1,146 @@
+---
+title: "Components reference: Pi Day sections and UI"
+description: "A reference for every section component, standalone component, and UI primitive in the Pi Day app, with usage examples and prop details."
+---
+
+The Pi Day app is composed of a layered set of React components. The six section components form the full-page scroll experience rendered by `Home.tsx`. Three standalone components (`Navbar`, `PiBot`, `EasterEgg`) provide global chrome and interactive overlays. The `ui/` directory holds shadcn/Radix UI primitives plus the custom `NeonButton`.
+
+## Section components
+
+Each section is mounted sequentially inside the `<main>` element of `Home.tsx` and receives its own `id` attribute for smooth-scroll navigation.
+
+<AccordionGroup>
+  <Accordion title="Hero">
+    The opening full-screen section (`id="hero"`). It renders:
+
+    - A large animated `π` symbol with a gradient from `--primary` → `--secondary` → `--accent` and the `animate-pulse-glow` keyframe
+    - A scrolling digit ribbon that cycles through the first 50 digits of `PI_DIGITS` at 100 ms per character, rendered in a masked `font-mono` row
+    - Two `NeonButton` CTAs — **Explorar Pi** (primary, scrolls to `#what-is-pi`) and **Jugar Desafío** (secondary, scrolls to `#game`)
+    - A bouncing scroll indicator at the bottom of the viewport
+    - A background image (`public/images/space-bg.png`) loaded via `import.meta.env.BASE_URL` with a gradient overlay
+
+    All entrance animations use Framer Motion with staggered delays (0 s, 0.5 s, 0.8 s).
+  </Accordion>
+
+  <Accordion title="WhatIsPi">
+    An interactive explainer section (`id="what-is-pi"`). It features:
+
+    - A live animated circle whose radius is controlled by a native `<input type="range">` (range: 10–100)
+    - A rendered circumference formula (`C = 2πr`) that updates in real time as the user drags the slider
+    - Three `InfoCard` sub-components displaying key facts about π's irrationality, transcendence, and universality
+  </Accordion>
+
+  <Accordion title="History">
+    A scroll-driven timeline section (`id="history"`). It uses Framer Motion's `useScroll` and `useTransform` hooks to animate six historical milestones as the user scrolls through the section. Each milestone includes a year, a civilization or mathematician name, and a short description. The timeline renders vertically with staggered entrance animations tied to scroll progress.
+  </Accordion>
+
+  <Accordion title="MemoryGame">
+    An interactive memory challenge (`id="game"`). Key implementation details:
+
+    - Captures keyboard input through a hidden `<input>` element that stays in focus, so the user types π digits directly
+    - Three game modes with different digit sequence lengths and scoring rules
+    - A HUD (heads-up display) that shows remaining lives, current score, and an elapsed timer
+    - Plays `playSuccessSound()` on correct digits and `playErrorSound()` on mistakes via `src/lib/audio.ts`
+  </Accordion>
+
+  <Accordion title="Visualizer">
+    A digit-visualization section (`id="gallery"`). It renders up to 1,000 digits of `PI_DIGITS` and colors each digit using the `DIGIT_COLORS` neon mapping from `src/lib/constants.ts`. You can toggle between two layout modes:
+
+    - **Grid** — a dense 2-D grid of colored digit cells
+    - **Circle** — digits arranged along a circular arc
+
+    Both modes use the same `DIGIT_COLORS` palette so each digit 0–9 has a consistent neon color identity across the entire visualization.
+  </Accordion>
+
+  <Accordion title="RealWorld">
+    A closing section (`id="real-world"`) that displays six cards showing practical applications of π. Each card has a `lucide-react` icon and a short description. Applications covered: space science (NASA rover navigation), GPS and satellites, waves and signals (Fourier transform/MP3/Wi-Fi), architecture (domes, cylinders, arches), quantum physics (Heisenberg, Schrödinger), and rivers and nature (river sinuosity).
+  </Accordion>
+</AccordionGroup>
+
+## Standalone components
+
+<AccordionGroup>
+  <Accordion title="Navbar">
+    A fixed header (`position: fixed; top: 0`) that provides smooth-scroll navigation across all six sections. Its behavior:
+
+    - Becomes semi-transparent with `backdrop-blur-lg` and a subtle bottom border once the user scrolls past 50 px (`window.scrollY > 50`)
+    - On desktop, renders six text buttons pointing to `#hero`, `#what-is-pi`, `#history`, `#game`, `#gallery`, and `#real-world`
+    - On mobile, collapses to a hamburger icon; clicking it triggers a Framer Motion `AnimatePresence` drawer that slides in from the top with `opacity` and `y` animations
+
+    The logo mark (`π Día de Pi`) is itself a scroll-to-top button.
+
+    ```typescript
+    const NAV_LINKS = [
+      { name: "Inicio",     href: "#hero" },
+      { name: "¿Qué es π?", href: "#what-is-pi" },
+      { name: "Historia",   href: "#history" },
+      { name: "Desafío",    href: "#game" },
+      { name: "Galería",    href: "#gallery" },
+      { name: "Mundo Real", href: "#real-world" },
+    ];
+    ```
+  </Accordion>
+
+  <Accordion title="PiBot">
+    A floating chat widget fixed to the bottom-right corner of the viewport (`z-index: 50`). When the user clicks the `MessageCircle` button, a 350 × 500 px chat panel animates in using Framer Motion scale and opacity transitions.
+
+    - **Preset questions** — four quick-reply buttons scroll horizontally above the input: *¿Qué es π?*, *¿Por qué es infinito?*, *¿Quién descubrió π?*, *¿Para qué sirve?*
+    - **Response matching** — a hardcoded `RESPONSES` map does case-insensitive substring matching. Unrecognized questions fall back to a default reply
+    - **Typing indicator** — a 1.5 s delay simulates a thinking pause; during that delay three bouncing dots appear and `playTypingBeep()` fires three times at 200 ms intervals
+    - **Auto-scroll** — a `useEffect` on `messages` and `isTyping` scrolls the message list to the bottom after each update
+  </Accordion>
+
+  <Accordion title="EasterEgg">
+    An invisible component (`return null`) rendered at the root of the provider tree in `App.tsx`. It attaches a `keydown` listener to `window` and accumulates the last seven characters typed. When the accumulated string matches `"3.14159"`:
+
+    1. `playSuccessSound()` fires two ascending sine tones (880 Hz → 1760 Hz)
+    2. A 3-second dual-burst confetti animation launches from both sides of the screen using `canvas-confetti` with the brand colors `#00D4FF`, `#B026FF`, and `#ffffff`
+    3. An `alert()` notifies the user they found the Pi Moment
+
+    Only numeric characters and `.` are tracked; all other keys are ignored.
+
+    <Tip>
+      Try typing `3.14159` anywhere on the page to trigger the easter egg.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## UI primitives
+
+### NeonButton
+
+`NeonButton` is a custom button component in `src/components/ui/NeonButton.tsx`. It wraps the shadcn `Button` base with neon glow styles driven by CSS custom properties.
+
+**Variants**
+
+| Variant | Color | Use case |
+|---------|-------|----------|
+| `primary` (default) | `--primary` Electric Neon Blue | Main calls to action |
+| `secondary` | `--secondary` Neon Purple | Alternative actions |
+| `accent` | `--accent` Hot Pink | Highlight actions |
+
+**Sizes**
+
+| Size | Description |
+|------|-------------|
+| `sm` | Compact buttons in tight layouts |
+| `md` (default) | Standard inline buttons |
+| `lg` | Hero-level CTAs |
+
+```tsx
+import { NeonButton } from "@/components/ui/NeonButton";
+
+<NeonButton variant="secondary" size="lg" onClick={() => {}}>
+  Jugar Desafío
+</NeonButton>
+```
+
+### shadcn/Radix UI components
+
+The `src/components/ui/` directory contains the full set of shadcn components generated from `components.json` (style: `new-york`, `cssVariables: true`). The ones actively used in this app are:
+
+| Component | Usage |
+|-----------|-------|
+| `Toaster` | Renders the global toast queue; mounted in `App.tsx` outside the router |
+| `TooltipProvider` | Required context for all `Tooltip` primitives; wraps the full tree |
+| `Toast` / `useToast` | Imperative toast API consumed across section components |

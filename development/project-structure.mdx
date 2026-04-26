@@ -1,0 +1,153 @@
+---
+title: "Pi Day project structure and architecture"
+description: "An overview of the Pi Day app's directory layout, routing model, provider tree, and key conventions for working with the codebase."
+---
+
+The Pi Day app is a single-page React application built with Vite. All source code lives under `src/`, organized into components, pages, hooks, and library utilities. Understanding this layout helps you locate code quickly and follow the conventions the project uses for routing, image paths, and provider composition.
+
+## Directory layout
+
+```
+pi-day-vercel/
+├── public/
+│   └── images/          # Static assets (space-bg.png, grid-texture.png)
+├── src/
+│   ├── components/
+│   │   ├── sections/    # Page sections (Hero, WhatIsPi, History, MemoryGame, Visualizer, RealWorld)
+│   │   ├── ui/          # Radix UI / shadcn components + NeonButton
+│   │   ├── EasterEgg.tsx
+│   │   ├── Navbar.tsx
+│   │   └── PiBot.tsx
+│   ├── hooks/           # use-mobile, use-toast
+│   ├── lib/             # constants.ts, audio.ts, utils.ts
+│   ├── pages/           # Home.tsx, not-found.tsx
+│   ├── App.tsx          # Root with routing + providers
+│   ├── main.tsx         # Entry point
+│   └── index.css        # Tailwind v4 + CSS custom properties
+├── docs.json
+├── package.json
+├── vite.config.ts
+└── vercel.json
+```
+
+## Entry point
+
+`main.tsx` is the Vite entry point. It mounts the React tree into the `#root` DOM node and imports `index.css` to apply global styles:
+
+```tsx
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import "./index.css";
+
+createRoot(document.getElementById("root")!).render(<App />);
+```
+
+## Routing
+
+The app uses [wouter](https://github.com/molefrog/wouter), a lightweight client-side router with a React hooks API. There are two routes defined in `App.tsx`:
+
+| Route | Component | Description |
+|-------|-----------|-------------|
+| `/` | `Home` | The main single-page experience with all sections |
+| `*` (catch-all) | `NotFound` | Displayed for any unmatched URL |
+
+```tsx
+function Router() {
+  return (
+    <Switch>
+      <Route path="/" component={Home} />
+      <Route component={NotFound} />
+    </Switch>
+  );
+}
+```
+
+The router is initialized with `base={import.meta.env.BASE_URL.replace(/\/$/, "")}` so that the app works correctly when deployed to a sub-path.
+
+## Provider tree
+
+`App.tsx` composes the full React provider tree. From outermost to innermost:
+
+<Steps>
+  <Step title="QueryClientProvider">
+    Wraps the entire app and provides a `QueryClient` instance from TanStack Query for any data-fetching hooks.
+  </Step>
+  <Step title="TooltipProvider">
+    A Radix UI context required by all `Tooltip` components throughout the shadcn/ui primitives.
+  </Step>
+  <Step title="WouterRouter">
+    Establishes the client-side routing context, scoped to `import.meta.env.BASE_URL`.
+  </Step>
+  <Step title="EasterEgg">
+    An invisible component rendered inside the router that listens globally for the keysequence `3.14159`. It sits inside the router so it can access routing context if needed in future.
+  </Step>
+  <Step title="Router (Switch/Route)">
+    The actual route switcher that renders either `Home` or `NotFound`.
+  </Step>
+  <Step title="Toaster">
+    Rendered outside the router but still inside `TooltipProvider`; it displays shadcn toast notifications.
+  </Step>
+</Steps>
+
+```tsx
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+          <EasterEgg />
+          <Router />
+        </WouterRouter>
+        <Toaster />
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
+```
+
+## Path alias
+
+Vite is configured with a `@/` alias that resolves to the `src/` directory. You can use it in any import instead of writing relative paths:
+
+```typescript
+// vite.config.ts
+resolve: {
+  alias: {
+    "@": path.resolve(__dirname, "src"),
+  },
+},
+```
+
+This means `@/components/ui/NeonButton` resolves to `src/components/ui/NeonButton`, and `@/lib/utils` resolves to `src/lib/utils`.
+
+## Image paths and BASE_URL
+
+Static images are served from `public/images/`. Because the app supports deployment to a sub-path, image `src` values are prefixed with `import.meta.env.BASE_URL` rather than a bare `/`:
+
+```tsx
+<img
+  src={`${import.meta.env.BASE_URL}images/space-bg.png`}
+  alt="Deep Space"
+/>
+```
+
+<Note>
+  During local development `BASE_URL` is `/`, so the path resolves to `/images/space-bg.png`. On a sub-path deployment it expands correctly to the configured base.
+</Note>
+
+## Library utilities
+
+The `src/lib/` directory contains three focused modules:
+
+| File | Purpose |
+|------|---------|
+| `constants.ts` | Exports `PI_DIGITS` (first 1,000 digits) and `DIGIT_COLORS` (neon hex per digit 0–9) |
+| `audio.ts` | Web Audio API helpers: `playTone`, `playSuccessSound`, `playErrorSound`, `playTypingBeep` |
+| `utils.ts` | Re-exports `cn()`, a `clsx` + `tailwind-merge` class merger used everywhere |
+
+## Custom hooks
+
+| Hook | Location | Behavior |
+|------|----------|----------|
+| `useIsMobile` | `hooks/use-mobile.tsx` | Returns `true` when viewport width is below 768 px, using a `matchMedia` listener |
+| `useToast` / `toast` | `hooks/use-toast.ts` | Lightweight toast state manager backed by a module-level listener array; limits to one toast at a time |

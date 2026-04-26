@@ -1,0 +1,41 @@
+---
+title: "PiBot: your Pi questions answered"
+description: "PiBot is a floating bottom-right chat widget that answers common questions about Pi with preset responses and case-insensitive keyword matching."
+---
+
+PiBot is a lightweight chat assistant built into the Pi Day app. It lives in a floating widget fixed to the bottom-right corner of every page. You can ask it common questions about Pi and get instant answers — no account or sign-in required.
+
+## Opening PiBot
+
+Click the circular chat icon in the bottom-right corner of the screen to open the chat window. The window slides up and displays PiBot's greeting message. Click the **X** button in the chat header to close it.
+
+## Preset questions
+
+Four preset question buttons appear above the text input. Click any of them to send the question instantly — no typing needed.
+
+<AccordionGroup>
+  <Accordion title="¿Qué es π?">
+    Pi (π) es la relación geométrica entre la circunferencia de un círculo y su diámetro. Equivale aproximadamente a 3.14159, y es una constante en todos los círculos del universo.
+  </Accordion>
+  <Accordion title="¿Por qué es infinito?">
+    Pi es un número irracional. Esto significa matemáticamente que no puede escribirse como una fracción simple, por lo que su representación decimal nunca termina y nunca entra en un patrón repetitivo.
+  </Accordion>
+  <Accordion title="¿Quién descubrió π?">
+    Nadie lo "descubrió" de un solo golpe. Antiguos babilonios y egipcios tenían aproximaciones hace 4000 años. Arquímedes en Grecia hizo el primer cálculo riguroso. El símbolo "π" fue popularizado por Euler en 1737.
+  </Accordion>
+  <Accordion title="¿Para qué sirve?">
+    Se usa en todo lo que involucre círculos, curvas u ondas. GPS, construcción de edificios, misiones espaciales de la NASA, procesamiento de señales (tu wifi) y modelos climáticos.
+  </Accordion>
+</AccordionGroup>
+
+## Typing animation
+
+After you send a message, PiBot plays three short beep sounds spaced 200 ms apart while a bouncing-dots indicator is shown. After approximately 1.5 seconds the response appears and the indicator disappears.
+
+## Free-form questions
+
+You can also type your own question in the input field and press **Send** or hit Enter. PiBot matches your message against its response keys using case-insensitive keyword detection. If your input contains a recognizable keyword, you get the matching answer. If no keyword matches, PiBot replies with a default message encouraging you to keep exploring.
+
+<Note>
+  PiBot is a frontend-only chatbot with hardcoded responses. It does not connect to a backend server or use a language model. All answers are defined statically in the source code.
+</Note>

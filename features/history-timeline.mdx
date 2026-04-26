@@ -1,0 +1,56 @@
+---
+title: "Pi history: a millennium of calculation"
+description: "A scroll-driven animated timeline tracing humanity's quest to calculate π, from Babylonian estimates to modern supercomputers and 105 trillion digits."
+---
+
+The **History** section presents six pivotal moments in the millennia-long effort to calculate π, rendered as a vertical timeline that animates as you scroll. A gradient line — transitioning from the app's primary color through secondary to accent — grows downward along the timeline spine in proportion to your scroll position. Each entry fades in from below as it enters the viewport, giving you the feeling of moving through time as you read.
+
+## Scroll-driven animation
+
+The timeline uses Framer Motion's `useScroll` hook, tracking the section from when its bottom edge enters the viewport to when its top edge leaves it (`offset: ["start end", "end start"]`). The progress value is then mapped — between 20 % and 80 % of the scroll range — to the height of the glowing gradient line. Entries alternate left and right on wider screens, each animated independently with a `0.1 s` stagger delay per item.
+
+## Timeline entries
+
+The six milestones below are taken verbatim from the `TIMELINE` array in `History.tsx`:
+
+<AccordionGroup>
+  <Accordion title="2000 BC — Babylonians · 3.125">
+    Approximation based on the geometry of inscribed polygons. The Babylonians arrived at their estimate by comparing the perimeter of a hexagon inscribed in a circle to the circle's circumference.
+  </Accordion>
+  <Accordion title="1650 BC — Papiro de Rhind (Egypt) · 3.1605">
+    The scribe Ahmes documented the calculation of the area of a circle. The Rhind Mathematical Papyrus is one of the earliest written records of mathematical reasoning, and its π approximation was used for practical land-measurement.
+  </Accordion>
+  <Accordion title="250 BC — Archimedes · 3.1418">
+    Used polygons of 96 sides to calculate precise bounds for π. By inscribing and circumscribing regular polygons around a circle and computing their perimeters, Archimedes proved that π lies strictly between 223/71 and 22/7.
+  </Accordion>
+  <Accordion title="480 AD — Zu Chongzhi · 355/113">
+    Calculated π to 7 exact decimal places — a record that stood for **800 years**. His fraction 355/113 (≈ 3.1415929) is accurate to six decimal places and remained the most precise published value until the 15th century.
+  </Accordion>
+  <Accordion title="1706 — William Jones · π">
+    Was the first to use the Greek symbol π (pi) for this constant. Jones introduced the notation in his work *Synopsis Palmariorum Matheseos*; it was later popularized by Leonhard Euler, cementing the symbol's place in mathematics.
+  </Accordion>
+  <Accordion title="Present day — Supercomputers · 105 trillion digits">
+    The current record of calculated digits, requiring petabytes of storage. Modern record attempts run for weeks or months on dedicated hardware, pushing the limits of both computation and data storage.
+  </Accordion>
+</AccordionGroup>
+
+## The 800-year record
+
+The milestone worth highlighting is Zu Chongzhi's. His value of 355/113 — computed around 480 AD without algebraic notation or mechanical aids — was so accurate that no one surpassed it until the 15th century. The app displays this value prominently in the timeline card, underscoring just how remarkable the achievement was given the tools available at the time.
+
+<Note>
+  355/113 is a **convergent** of the continued fraction expansion of π. Convergents are the "best rational approximations" of an irrational number — meaning no fraction with a smaller denominator comes closer to the true value of π.
+</Note>
+
+## Visual structure
+
+Each timeline card shows four pieces of information:
+
+| Field | Example |
+|---|---|
+| Year badge | `480 d.C.` |
+| Civilization or name | Zu Chongzhi |
+| Approximation value | `355/113` |
+| Description | Calculated Pi to 7 exact decimal places, a record that lasted 800 years. |
+
+Cards alternate sides on desktop (even-indexed entries align to the right, odd to the left) to create a zigzag reading path down the page.

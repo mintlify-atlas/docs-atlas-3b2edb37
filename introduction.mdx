@@ -1,0 +1,57 @@
+---
+title: "Pi Day: interactive π celebration app"
+description: "Pi Day is an open-source React 19 and Vite app celebrating March 14 with interactive games, visualizations, a history timeline, and an AI-style chatbot."
+---
+
+Pi Day is an interactive web application that celebrates March 14th (3/14) — the annual day dedicated to the mathematical constant π. Built with **React 19**, **TypeScript**, **Vite**, **Tailwind CSS v4**, **Framer Motion**, and **shadcn/Radix UI**, the app turns a single scrollable page into an educational and playful experience. Each section introduces a different facet of π — from its geometric definition to its appearances in NASA navigation, signal processing, and quantum mechanics.
+
+## Features
+
+Explore everything the app offers through its interactive sections:
+
+<CardGroup cols={2}>
+  <Card title="What is Pi?" icon="infinity" href="/features/what-is-pi">
+    An animated circle visualizer that shows the relationship between circumference and diameter in real time.
+  </Card>
+  <Card title="History timeline" icon="clock-rotate-left" href="/features/history-timeline">
+    A scroll-driven timeline tracing π from Babylonian clay tablets through modern supercomputer records.
+  </Card>
+  <Card title="Memory game" icon="gamepad" href="/features/memory-game">
+    Three game modes — Normal, Time Attack, and Endless — that challenge you to recall as many Pi digits as possible.
+  </Card>
+  <Card title="Digit visualizer" icon="chart-scatter" href="/features/digit-visualizer">
+    A color-coded matrix and circular display of the first 1,000 digits of π.
+  </Card>
+  <Card title="Real-world applications" icon="globe" href="/features/real-world-applications">
+    Six domains where π plays a critical role: space exploration, signal processing, architecture, and more.
+  </Card>
+  <Card title="PiBot" icon="robot" href="/features/pibot">
+    A floating chatbot that answers questions about π, its history, and its properties.
+  </Card>
+  <Card title="Easter egg" icon="egg" href="/features/easter-egg">
+    A hidden surprise triggered by typing a specific sequence anywhere on the page.
+  </Card>
+</CardGroup>
+
+## Key technologies
+
+The app is a fully client-side single-page application (SPA). Navigation between sections uses smooth-scroll anchors rather than separate routes — the entire experience lives on one URL. A `wouter`-based router handles the root path and a 404 fallback, while Vercel's rewrite rules ensure direct links always serve `index.html`.
+
+| Layer | Choice |
+|---|---|
+| UI framework | React 19 |
+| Language | TypeScript 5 |
+| Build tool | Vite 6 |
+| Styling | Tailwind CSS v4 (via `@tailwindcss/vite`) |
+| Animation | Framer Motion 12 |
+| Component primitives | shadcn/Radix UI |
+| Routing | wouter 3 |
+| Data fetching | TanStack Query 5 |
+
+## Design philosophy
+
+The visual design follows a dark sci-fi aesthetic: black backgrounds, glowing primary-color accents, subtle white borders at low opacity, and smooth entrance animations driven by Framer Motion. The navbar is transparent at the top of the page and gains a frosted-glass backdrop as you scroll. On mobile, a slide-down menu replaces the horizontal nav links.
+
+<Note>
+  Because the app is a single-page application with anchor-based navigation, the URL does not change as you move between sections. Bookmarking a specific section is not supported by design.
+</Note>

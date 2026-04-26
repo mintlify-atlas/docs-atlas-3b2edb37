@@ -1,0 +1,79 @@
+{
+  "projectType": "frontend",
+  "projectName": "Pi Day",
+  "projectDescription": "An interactive, visually immersive single-page web app celebrating Pi Day (March 14) with educational content, a digit-memory game, data visualizations, and an AI-style chatbot — all wrapped in a dark sci-fi aesthetic.",
+  "theme": "luma",
+  "primaryColor": "#00D4FF",
+  "lightColor": null,
+  "darkColor": "#0A0A1A",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Overview",
+        "groups": [
+          {
+            "group": "Introduction",
+            "pages": ["introduction", "getting-started"]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/what-is-pi",
+              "features/history-timeline",
+              "features/memory-game",
+              "features/digit-visualizer",
+              "features/real-world-applications",
+              "features/pibot",
+              "features/easter-egg"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Development",
+        "groups": [
+          {
+            "group": "Setup & Deployment",
+            "pages": [
+              "development/setup",
+              "development/deployment"
+            ]
+          },
+          {
+            "group": "Architecture",
+            "pages": [
+              "development/project-structure",
+              "development/components",
+              "development/styling"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Interactive circle circumference visualizer with real-time radius slider",
+    "Three-mode Pi digit memory game (Normal, Time Attack, Sudden Death)",
+    "Animated history timeline from Babylonians to modern supercomputers",
+    "Data gallery showing the first 1,000 Pi digits as a colored matrix or circular star map",
+    "PiBot floating chatbot with hardcoded Q&A about Pi",
+    "Easter egg: typing '3.14159' anywhere triggers a confetti celebration",
+    "Sci-fi dark theme with glassmorphism panels, neon glow effects, and Framer Motion animations",
+    "Fully responsive layout with mobile navigation drawer",
+    "Deployed to Vercel via vercel.json configuration"
+  ],
+  "publicApiSurface": [
+    "Hero section — animated π symbol with scrolling digit ribbon",
+    "WhatIsPi section — interactive circle with radius slider, circumference formula",
+    "History section — scroll-driven animated timeline with 6 historical milestones",
+    "MemoryGame section — keyboard-driven digit input, three game modes (normal, time, endless)",
+    "Visualizer section — 1,000-digit grid/circle toggle with per-digit color legend",
+    "RealWorld section — six real-world Pi application cards",
+    "PiBot component — floating chat widget with preset Q&A",
+    "EasterEgg component — global keydown listener triggering confetti on '3.14159'",
+    "NeonButton UI component — primary/secondary/accent variants with glow",
+    "Navbar — fixed header with smooth-scroll anchor links",
+    "PI_DIGITS constant — first 1,000 digits of Pi",
+    "DIGIT_COLORS constant — neon color map for digits 0–9"
+  ]
+}

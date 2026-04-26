@@ -1,0 +1,82 @@
+---
+title: "Deploy Pi Day to Vercel"
+description: "Deploy the Pi Day app to Vercel with zero configuration — a vercel.json rewrite rule handles SPA routing so every path serves index.html."
+---
+
+Pi Day is a fully static single-page application with no backend, no database, and no required environment variables. The repository includes a `vercel.json` that handles the only configuration Vercel needs — SPA routing rewrites — so deployment is effectively zero-config.
+
+## Vercel configuration
+
+The `vercel.json` at the root of the repository contains a single rewrite rule:
+
+```json
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+```
+
+This rule tells Vercel to serve `index.html` for every request path. Pi Day uses [wouter](https://github.com/molefrog/wouter) for client-side routing, which means route resolution happens entirely in the browser. Without this rewrite, navigating directly to a path like `/digits` would return a 404 from the server instead of loading the app.
+
+## Deploy to Vercel
+
+<Steps>
+  <Step title="Push your fork to GitHub">
+    Make sure your fork of the repository is pushed to GitHub. Vercel pulls directly from your GitHub account, so the repo must be accessible there.
+
+    ```bash
+    git remote -v          # confirm your remote points to GitHub
+    git push origin main
+    ```
+  </Step>
+
+  <Step title="Import the repository in the Vercel dashboard">
+    Go to [https://vercel.com/new](https://vercel.com/new), sign in, and click **Add New Project**. Select your GitHub account and choose the `pi-day-vercel` repository from the list.
+  </Step>
+
+  <Step title="Verify the auto-detected build settings">
+    Vercel automatically detects Vite projects and pre-fills the correct settings:
+
+    | Setting | Value |
+    |---------|-------|
+    | Framework preset | Vite |
+    | Build command | `vite build` |
+    | Output directory | `dist` |
+    | Install command | `npm install` (or your package manager) |
+
+    No changes are needed. The `vercel.json` rewrites are applied automatically.
+  </Step>
+
+  <Step title="Click Deploy">
+    Click **Deploy**. Vercel runs `vite build`, copies the contents of `dist/` to its CDN, and applies the rewrite rule from `vercel.json`. Your app is live within about a minute.
+  </Step>
+</Steps>
+
+## Build output
+
+The `vite build` command compiles TypeScript and bundles all assets into the `dist/` directory:
+
+```
+dist/
+├── index.html
+├── assets/
+│   ├── index-[hash].js
+│   └── index-[hash].css
+```
+
+The `dist/` directory is listed in `.gitignore` and is never committed to the repository — Vercel builds it fresh on every deployment.
+
+## BASE_URL and image paths
+
+Vite exposes the deployment base path as `import.meta.env.BASE_URL` at build time. The `vite.config.ts` sets `base: "/"`, so on Vercel (where the app is served from the domain root) this value is `/`.
+
+Static images in the project — such as `/images/space-bg.png` and `/images/grid-texture.png` — are referenced using absolute paths that rely on this base being `/`. If you ever deploy to a subpath (for example, GitHub Pages with a repo name prefix), you would need to update the `base` field in `vite.config.ts` to match.
+
+## Environment variables
+
+No environment variables are required to build or run Pi Day. The app has no backend API, no authentication service, and no third-party API keys. You do not need to configure anything in the Vercel dashboard's **Environment Variables** section.
+
+<Info>
+  If you add backend integrations in the future, prefix any variables you want available in the browser with `VITE_` (for example, `VITE_API_URL`). Variables without this prefix are not included in the client bundle.
+</Info>
